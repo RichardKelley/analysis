@@ -75,8 +75,13 @@ lemma Nat.add_succ (n m:Nat) : n + (m++) = (n + m)++ := by
 
 
 /-- n++ = n + 1 (Why?). Compare with Mathlib's `Nat.succ_eq_add_one` -/
+-- rck: ex
 theorem Nat.succ_eq_add_one (n:Nat) : n++ = n + 1 := by
-  sorry
+  revert n
+  apply induction
+  · apply zero_succ
+  · intro n ih
+    rw [ih, ← succ_add, ih]
 
 /-- Proposition 2.2.4 (Addition is commutative). Compare with Mathlib's `Nat.add_comm` -/
 theorem Nat.add_comm (n m:Nat) : n + m = m + n := by
@@ -89,8 +94,12 @@ theorem Nat.add_comm (n m:Nat) : n + m = m + n := by
 
 /-- Proposition 2.2.5 (Addition is associative) / Exercise 2.2.1
     Compare with Mathlib's `Nat.add_assoc` -/
+-- rck: ex
 theorem Nat.add_assoc (a b c:Nat) : (a + b) + c = a + (b + c) := by
-  sorry
+  revert c; apply induction
+  · simp
+  · intro c ih
+    rw [add_succ, ih, ← add_succ, add_succ b c]
 
 /-- Proposition 2.2.6 (Cancellation law)
     Compare with Mathlib's `Nat.add_left_cancel` -/
@@ -160,8 +169,18 @@ extracts a witness `x` and a proof `hx : P x` of the property from a hypothesis 
 #check ExistsUnique.unique
 
 /-- Lemma 2.2.10 (unique predecessor) / Exercise 2.2.2 -/
+-- rck: ex
 lemma Nat.uniq_succ_eq (a:Nat) (ha: a.isPos) : ∃! b, b++ = a := by
-  sorry
+  apply existsUnique_of_exists_of_unique
+  · revert a; apply induction
+    · intros h
+      contradiction
+    · intros n ih h
+      exists n
+  · intros y₁ y₂ h₁ h₂
+    rw [← h₂] at h₁
+    apply succ_cancel at h₁
+    exact h₁
 
 /-- Definition 2.2.11 (Ordering of the natural numbers)
     This defines the `≤` operation on the natural numbers. -/
@@ -204,17 +223,30 @@ example : (8:Nat) > 5 := by
   decide
 
 /-- Compare with Mathlib's `Nat.lt_succ_self`-/
+-- rck: ex
 theorem Nat.succ_gt_self (n:Nat) : n++ > n := by
-  sorry
+  simp
+  rw [Nat.lt_iff]
+  constructor
+  · exists 1; rw [← one_add, add_comm]
+  · simp; intro h
+    rw [← one_add n, add_comm] at h
+    rw (occs := .pos [1]) [← zero_add n, add_comm] at h
+    apply add_left_cancel at h
+    contradiction
 
 /-- Proposition 2.2.12 (Basic properties of order for natural numbers) / Exercise 2.2.3
 
 (a) (Order is reflexive). Compare with Mathlib's `Nat.le_refl`-/
+-- rck: ex
 theorem Nat.ge_refl (a:Nat) : a ≥ a := by
-  sorry
+  simp
+  rw [le_iff_lt_or_eq]
+  right; rfl
 
 /-- (b) (Order is transitive).  The `obtain` tactic will be useful here.
     Compare with Mathlib's `Nat.le_trans` -/
+-- rck: ex
 theorem Nat.ge_trans {a b c:Nat} (hab: a ≥ b) (hbc: b ≥ c) : a ≥ c := by
   sorry
 
