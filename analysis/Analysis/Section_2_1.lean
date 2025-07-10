@@ -75,7 +75,8 @@ lemma Nat.two_succ : 2++ = 3 := by rfl
 -/
 theorem Nat.succ_ne (n:Nat) : n++ ≠ 0 := by
   by_contra h
-  simp only [reduceCtorEq] at h
+  injection h -- rck: This seems easier?
+  --simp only [reduceCtorEq] at h -- original step.
 
 /-- Proposition 2.1.6 (4 is not equal to zero) -/
 theorem Nat.four_ne : (4:Nat) ≠ 0 := by
@@ -89,7 +90,8 @@ theorem Nat.four_ne : (4:Nat) ≠ 0 := by
   Compare with Mathlib's `Nat.succ_inj`.
 -/
 theorem Nat.succ_cancel {n m:Nat} (hnm: n++ = m++) : n = m := by
-  rwa [succ.injEq] at hnm
+  --rwa [succ.injEq] at hnm -- original step
+  injection hnm -- rck: This seems easier? I can't see where succ.injEq comes from...
 
 /--
   Axiom 2.4 (Different natural numbers have different successors).
